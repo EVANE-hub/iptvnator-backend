@@ -17,9 +17,12 @@ console.log(`Development mode: ${isDev}`);
 console.log(`Origin URL: ${originUrl}`);
 
 const corsOptions = {
-  origin: originUrl,
+  origin: "*", // Modifié pour accepter toutes les origines
   optionsSuccessStatus: 200,
 };
+
+// Application de CORS globalement à toutes les routes
+app.use(cors(corsOptions));
 
 const https = require("https");
 const agent = new https.Agent({
@@ -28,7 +31,7 @@ const agent = new https.Agent({
 
 app.get("/", (req, res) => res.send("Hello world"));
 
-app.get("/parse", cors(corsOptions), async (req, res) => {
+app.get("/parse", async (req, res) => {
   const { url } = req.query;
   if (isDev) console.log(url);
   if (!url) return res.status(400).send("Missing url");
@@ -39,7 +42,7 @@ app.get("/parse", cors(corsOptions), async (req, res) => {
   return res.send(result);
 });
 
-app.get("/parse-xml", cors(corsOptions), async (req, res) => {
+app.get("/parse-xml", async (req, res) => {
   const { url } = req.query;
   console.log(url);
   if (!url) return res.status(400).send("Missing url");
